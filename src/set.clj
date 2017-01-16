@@ -26,3 +26,5 @@
 
 (defn remove-where [where all]
   (set/select #(not (match? where %)) all))
+
+(def remove-attrs-everywhere (partial remove-attrs-where {}))
