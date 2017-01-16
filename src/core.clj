@@ -1,7 +1,9 @@
 (ns core
   (:use date set)
-  (:require [clojure.core.match :refer [match]]
-            [hara.time :refer [now]]))
+  (:refer-clojure :exclude [find])
+  (:require [clojure.set :refer [project]]
+            [clojure.core.match :refer [match]]
+            [hara.time :refer [now before minus adjust from-map]]))
 
 
 (defn event [type attributes & {:keys [where] :as attrs}]
@@ -13,6 +15,7 @@
 (defrecord DB [file history state])
 
 
+; Event Execution
 (defn transition [all event]
   (set
     (match [event]
@@ -25,6 +28,31 @@
 (defn replay [history]
   (reduce transition #{} history))
 
+(defn exec-event [type db attributes & args]
+  (let [event   (event type attributes)
+        history (conj (:history db) event)
+        state   (transition (:state db) event)]
+    (assoc db :history history :state state)))
+
+
+; Pure API
+(defn rewind [history to-date]
+  (->> history
+    (take-while #(before (:date %) to-date))
+    (replay)))
+
+(defn find [{h :history} {a :at r :rewind w :where p :project}]
+  (->>
+    (at-or-rewind :rewind r :at a)
+    (rewind h)
+    (select w)
+    (project p)))
+
+(defn slice [db & {:keys [from to by where project :as options]}]
+  (let [dates   (date-range from to by)
+        results (map #(find db (assoc options :at %) dates))]
+    (map vector dates results)))
+
 
 ; Persistence
 (defn init [file]
@@ -34,12 +62,3 @@
 
 (defn save [db]
   (spit (db :file) (db :history)))
-
-(defn exec-event [type db attributes & args]
-  (let [event   (event type attributes)
-        history (conj (:history db) event)
-        state   (transition (:state db) event)]
-    (assoc db :history history :state state)))
-
-(defn exec-event! [type db attributes & args]
-  (save (apply exec-event type @db attributes args)))
