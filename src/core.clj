@@ -5,14 +5,11 @@
             [clojure.core.match :refer [match]]
             [hara.time :refer [now before minus adjust from-map]]))
 
-
-(defn event [type attributes & {:keys [where] :as attrs}]
-  (merge {:type type
-          :attributes attributes
-          :date (now)} attrs))
-
-
 (defrecord DB [file history state])
+(defrecord Event [type attributes date])
+
+(defn event [type attributes & {:as attrs}]
+  (merge (->Event type attributes (now)) attrs))
 
 
 ; Event Execution
@@ -28,11 +25,11 @@
 (defn replay [history]
   (reduce transition #{} history))
 
-(defn exec-event [type db attributes & args]
-  (let [event   (event type attributes)
-        history (conj (:history db) event)
-        state   (transition (:state db) event)]
-    (assoc db :history history :state state)))
+(defn exec-event [type {:as db :keys [history state]} attributes attrs]
+  (as-> (apply event type attributes attrs) event
+    (assoc db
+      :history (conj history event)
+      :state   (transition state event))))
 
 
 ; Pure API
