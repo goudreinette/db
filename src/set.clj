@@ -1,6 +1,8 @@
 (ns set
   (:require [clojure.set :as set]))
 
+(defn project [ks all]
+  (set/project all (or ks (mapcat keys all))))
 
 (defn match? [where entity]
   (= (select-keys entity (keys where)) where))

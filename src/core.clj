@@ -1,8 +1,7 @@
 (ns core
   (:use date set)
   (:refer-clojure :exclude [find])
-  (:require [clojure.set :refer [project]]
-            [clojure.core.match :refer [match]]
+  (:require [clojure.core.match :refer [match]]
             [hara.time :refer [now before minus adjust from-map]]))
 
 (defrecord DB [file history state])
@@ -37,6 +36,10 @@
   (->> history
     (take-while #(before (:date %) to-date))
     (replay)))
+
+(defn trace [it]
+  (println it)
+  it)
 
 (defn find [{h :history} {a :at r :rewind w :where p :project}]
   (->>

@@ -1,6 +1,10 @@
 (ns core-test
   (:use midje.sweet)
-  (:require [core :refer [transition event]]))
+  (:refer-clojure :exclude [find])
+  (:require [core :refer [transition event find]]))
+
+(def db {:state #{{:age 4 :name "Lieuwe"}}
+         :history [(event :assert {:age 4 :name "Lieuwe"})]})
 
 (facts "about event"
   (event :assert {:color :blue}) => (contains {:type :assert :attributes {:color :blue}})
@@ -16,3 +20,6 @@
   (transition #{{:age 4 :name "Lieuwe"}} (event :retract [:age])) => #{{:name "Lieuwe"}}
   ; Remove Entity
   (transition #{{:color :blue} {:color :yellow}} {:type :retract :where {:color :yellow}}) => #{{:color :blue}})
+
+(facts "about find"
+  (find db {:where {:age 4}}) => #{{:age 4 :name "Lieuwe"}})

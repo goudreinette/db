@@ -16,5 +16,6 @@
 (defn at-or-rewind [& {:keys [rewind at]}]
   (as-date
     (cond
-      at     (adjust (now) at {:type java.util.Date})
-      rewind (minus  (now) (map-invert rewind) {:type java.util.Date}))))
+      at     (adjust (now) at)
+      rewind (minus  (now) (map-invert rewind))
+      :else  (now))))
