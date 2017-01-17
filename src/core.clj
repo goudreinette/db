@@ -21,8 +21,13 @@
       [{:type :retract :attributes a          }] (remove-attrs-everywhere a all) ; or all?
       [{:type :retract               :where w }] (remove-where w all))))
 
-(defn replay [history]
-  (reduce transition #{} history))
+(defn replay
+  ([history]
+   (replay history false))
+  ([history states?]
+   (cond->> history
+     states?       (reductions transition #{})
+     (not states?) (reduce transition #{}))))
 
 (defn exec-event [type {:as db :keys [history state]} attributes attrs]
   (as-> (apply event type attributes attrs) event
@@ -32,14 +37,11 @@
 
 
 ; Pure API
+
 (defn rewind [history to-date]
   (->> history
     (take-while #(before (:date %) to-date))
     (replay)))
-
-(defn trace [it]
-  (println it)
-  it)
 
 (defn find [{h :history} {a :at r :rewind w :where p :project}]
   (->>

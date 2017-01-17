@@ -2,13 +2,15 @@
   (:require [clojure.set :as set]))
 
 (defn project [ks all]
-  (set/project all (or ks (mapcat keys all))))
+  (cond-> all
+   ks (set/project ks)))
 
 (defn match? [where entity]
   (= (select-keys entity (keys where)) where))
 
 (defn select [where all]
-  (set/select #(match? where % ) all))
+  (cond->> all
+    where (set/select #(match? where % ))))
 
 (defn update-matching [f where all]
   (map #(if (match? where %) (f %) %)
