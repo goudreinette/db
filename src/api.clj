@@ -8,8 +8,8 @@
         state   (replay history)]
     (agent (->DB file history state))))
 
-(defn save [db]
-  (spit (db :file) (db :history)))
+(defn save [{:keys [file history]}]
+  (spit file history))
 
 
 ; Base API
@@ -24,3 +24,4 @@
 (def retract!    (partial exec-event! :retract))
 (def find!       (partial query!      find))
 (def slice!      (partial query!      slice))
+(def states!     (partial query!      states))

@@ -39,11 +39,6 @@
     (take-until-date to-date)
     (replay)))
 
-(defn states [history to-date]
-  (let [history (take-until-date history to-date)]
-    (interleave (map :date history)
-                (replay-reductions history))))
-
 ; Takes a DB map
 (defn exec-event [{:as db :keys [history state]} & args]
   (as-> (apply event args) event
@@ -62,3 +57,8 @@
   (let [dates   (date-range from to by)
         results (map #(find db (assoc options :at %) dates))]
     (map vector dates results)))
+
+(defn states [{history :history} {to :to}]
+  (let [history (take-until-date history (or to (now)))]
+    (interleave (map :date history)
+                (replay-reductions history))))

@@ -1,9 +1,10 @@
 (ns set
   (:require [clojure.set :as set]))
 
+; Queries/Predicates
 (defn project [ks all]
   (cond-> all
-   ks (set/project ks)))
+    ks (set/project ks)))
 
 (defn match? [where entity]
   (= (select-keys entity (keys where)) where))
@@ -17,8 +18,7 @@
        all))
 
 
-
-
+; "Mutations"
 (defn insert [entity all]
   (conj all entity))
 
@@ -31,4 +31,5 @@
 (defn remove-where [where all]
   (set/select #(not (match? where %)) all))
 
-(def remove-attrs-everywhere (partial remove-attrs-where {}))
+(def remove-attrs-everywhere
+  (partial remove-attrs-where {}))

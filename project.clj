@@ -6,7 +6,8 @@
      [org.clojure/core.incubator "0.1.4"]
      [im.chit/hara.time "2.4.8"]
      [reinvdwoerd/sandbox "0.0.1"]
-     [akar "0.1.0"]]
+     [akar "0.1.0"]
+     [egamble/let-else "1.0.7"]]
   :main api
   :target-path "target/%s"
   :profiles {:uberjar {:aot :all}
