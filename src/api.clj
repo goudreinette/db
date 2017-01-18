@@ -11,22 +11,22 @@
 (defn save [db]
   (spit (db :file) (db :history)))
 
-; API
-; Example:
-;   (find! db :rewind {4 :hours} :project [:likes] :where {:name "Me"})
 
-; Base
+; Base API
 (defn exec-event! [db & args]
   (apply send db exec-event args))
 
 (defn query! [f db & args]
   (apply f @db args))
 
-; Derived
+; Derived API
 (def assert!     (partial exec-event! :assert))
 (def retract!    (partial exec-event! :retract))
-
+(def find!       (partial query!      find))
+(def slice!      (partial query!      slice))
 
 
 ; Test
+; Example:
+;   (find! db :rewind {4 :hours} :project [:likes] :where {:name "Me"})
 (def db (init "db.edn"))
