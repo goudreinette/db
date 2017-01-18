@@ -24,11 +24,12 @@
 
 
 ; Takes history
-(defn replay-with [f history]
-  (f transition #{} history))
+(defn replay-with [f]
+  (fn [history] (f transition #{} history)))
 
-(def replay            (partial replay-with reduce))
-(def replay-reductions (partial replay-with reductions))
+(def replay            (replay-with reduce))
+(def replay-reductions (replay-with reductions))
+
 
 (defn take-until-date [history to-date]
   (take-while #(before (:date %) to-date) history))
