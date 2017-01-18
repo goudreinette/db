@@ -16,11 +16,11 @@
 (defn transition [all event]
   (set
     (match event
-      {:type :assert  :attributes a :where w } (update-where w a all)
-      {:type :assert  :attributes a          } (insert a all)
-      {:type :retract :attributes a :where w } (remove-attrs-where w a all)
-      {:type :retract :attributes a          } (remove-attrs-everywhere a all)
-      {:type :retract               :where w } (remove-where w all))))
+      {:type :assert  :attributes a :where w} (update-where w a all)
+      {:type :assert  :attributes a         } (insert a all)
+      {:type :retract :attributes a :where w} (remove-attrs-where w a all)
+      {:type :retract :attributes a         } (remove-attrs-everywhere a all)
+      {:type :retract               :where w} (remove-where w all))))
 
 
 ; Takes history
