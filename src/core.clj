@@ -8,8 +8,8 @@
 (defrecord DB [file history state])
 (defrecord Event [type attributes date])
 
-(defn event [type attributes & {:as attrs}]
-  (merge (->Event type attributes (now)) attrs))
+(defn event [type attributes & {:as args}]
+  (merge (->Event type attributes (now)) args))
 
 
 ; Event Execution
@@ -44,8 +44,8 @@
                 (replay-reductions history))))
 
 ; Takes a DB map
-(defn exec-event [{:as db :keys [history state]} type attributes attrs]
-  (as-> (apply event type attributes attrs) event
+(defn exec-event [{:as db :keys [history state]} type attributes args]
+  (as-> (apply event type attributes args) event
     (assoc db
       :history (conj history event)
       :state   (transition state event))))
