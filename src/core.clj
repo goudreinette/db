@@ -44,7 +44,7 @@
                 (replay-reductions history))))
 
 ; Takes a DB map
-(defn exec-event [type {:as db :keys [history state]} attributes attrs]
+(defn exec-event [{:as db :keys [history state]} type attributes attrs]
   (as-> (apply event type attributes attrs) event
     (assoc db
       :history (conj history event)

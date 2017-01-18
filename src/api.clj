@@ -13,11 +13,11 @@
 
 
 ; Base API
-(defn exec-event! [db & args]
-  (apply send db exec-event args))
+(defn exec-event! [type db attributes & args]
+  (send db exec-event type attributes args))
 
 (defn query! [f db & args]
-  (apply f @db args))
+  (f @db args))
 
 ; Derived API
 (def assert!     (partial exec-event! :assert))
