@@ -6,15 +6,17 @@
 (defn init [file]
   (let [history (->> file slurp read-string (sort-by :date))
         state   (replay history)]
-    (agent (->DB file history state))))
+    (atom (->DB file history state))))
 
-(defn save [{:keys [file history]}]
+(defn save [{:keys [file history] :as db}]
   (spit file history))
 
 
 ; Base API
 (defn exec-event! [type db attributes & args]
-  (send db (comp save exec-event) type attributes args))
+  (-> @db
+    (exec-event type attributes args)
+    (save)))
 
 (defn query! [f db & args]
   (f @db args))
