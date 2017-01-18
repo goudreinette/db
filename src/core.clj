@@ -2,7 +2,7 @@
   (:use date set)
   (:refer-clojure :exclude [find])
   (:require [joy.macros :refer [cond-apply]]
-            [clojure.core.match :refer [match]]
+            [akar.syntax :refer [match]]
             [hara.time :refer [now before after minus adjust from-map]]))
 
 (defrecord DB [file history state])
@@ -15,12 +15,12 @@
 ; Event Execution
 (defn transition [all event]
   (set
-    (match [event]
-      [{:type :assert  :attributes a :where w }] (update-where w a all)
-      [{:type :assert  :attributes a          }] (insert a all)
-      [{:type :retract :attributes a :where w }] (remove-attrs-where w a all)
-      [{:type :retract :attributes a          }] (remove-attrs-everywhere a all)
-      [{:type :retract               :where w }] (remove-where w all))))
+    (match event
+      {:type :assert  :attributes a :where w } (update-where w a all)
+      {:type :assert  :attributes a          } (insert a all)
+      {:type :retract :attributes a :where w } (remove-attrs-where w a all)
+      {:type :retract :attributes a          } (remove-attrs-everywhere a all)
+      {:type :retract               :where w } (remove-where w all))))
 
 
 ; Takes history

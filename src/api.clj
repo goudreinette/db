@@ -24,9 +24,3 @@
 (def retract!    (partial exec-event! :retract))
 (def find!       (partial query!      find))
 (def slice!      (partial query!      slice))
-
-
-; Test
-; Example:
-;   (find! db :rewind {4 :hours} :project [:likes] :where {:name "Me"})
-(def db (init "db.edn"))
