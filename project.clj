@@ -4,7 +4,8 @@
     [[org.clojure/clojure "1.8.0"]
      [org.clojure/core.match "0.3.0-alpha4"]
      [org.clojure/core.incubator "0.1.4"]
-     [im.chit/hara.time "2.4.8"]]
+     [im.chit/hara.time "2.4.8"]
+     [proto-repl-sayid "0.1.3"]]
   :main api
   :target-path "target/%s"
   :profiles {:uberjar {:aot :all}

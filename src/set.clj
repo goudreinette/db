@@ -10,7 +10,7 @@
 
 (defn select [where all]
   (cond->> all
-    where (set/select #(match? where % ))))
+    where (set/select #(match? where %))))
 
 (defn update-matching [f where all]
   (map #(if (match? where %) (f %) %)
