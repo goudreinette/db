@@ -14,7 +14,7 @@
 
 ; Base API
 (defn exec-event! [type db attributes & args]
-  (send db exec-event type attributes args))
+  (send db (comp save exec-event) type attributes args))
 
 (defn query! [f db & args]
   (f @db args))
