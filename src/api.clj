@@ -1,23 +1,32 @@
 (ns api
   (:refer-clojure :exclude [find])
-  (:require [core :refer [find save exec-event init]]))
+  (:require [core :refer :all]))
+
+; Persistence
+(defn init [file]
+  (let [history (->> file slurp read-string (sort-by :date))
+        state   (replay history)]
+    (agent (->DB file history state))))
+
+(defn save [db]
+  (spit (db :file) (db :history)))
 
 ; API
-(defn exec-event! [type db-atom attributes & args]
-  (save (apply exec-event type @db-atom attributes args)))
+; Example:
+;   (find! db :rewind {4 :hours} :project [:likes] :where {:name "Me"})
 
-; (find! db :rewind {4 :hours} :project [:likes] :where {:name "Me"})
-(defn find! [db-atom & options]
-  (apply core/find @db-atom options))
+; Base
+(defn exec-event! [db & args]
+  (apply send db exec-event args))
 
-(defn slice! [db-atom & options]
-  (apply core/slice @db-atom options))
+(defn query! [f db & args]
+  (apply f @db args))
+
+; Derived
+(def assert!     (partial exec-event! :assert))
+(def retract!    (partial exec-event! :retract))
 
 
 
-(def assert!  (partial exec-event! :assert))
-(def retract! (partial exec-event! :retract))
-
-
-; Testing
+; Test
 (def db (init "db.edn"))
